@@ -43,6 +43,22 @@ python main.py --list-factions
 python main.py --all --paper letter --no-guides
 ```
 
+## Printing multiple copies and Legends
+
+DogmaPress supports printing multiple copies of cards, with an optional override for Legend cards.
+
+A card is a Legend if its `Subtype` includes `Legend` (case-insensitive), e.g. `Demon - Legend`. `--legend-copies` applies to `--all` and `--faction` jobs; explicit `--quantities` always win.
+
+### Examples
+
+```bash
+# Three copies of every Demonic card
+python main.py --faction D --copies 3
+
+# Three copies of every Demonic card, but only one of each Legend
+python main.py --faction D --copies 3 --legend-copies 1
+```
+
 Use **Print at Actual Size / 100%**, not *Fit to Page*, to preserve card dimensions.
 
 ## Design and code organization

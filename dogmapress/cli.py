@@ -69,6 +69,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--gutter-mm", type=float, default=0.2)
     parser.add_argument("--no-guides", action="store_true", help="Disable exterior cut ticks")
     parser.add_argument("--list-factions", action="store_true", help="List faction counts and exit")
+    parser.add_argument(
+    "--legend-copies",
+    type=int,
+    default=None,
+    help="Override the number of copies for Legend cards"
+)
     return parser
 
 
@@ -95,9 +101,19 @@ def main(argv: list[str] | None = None) -> int:
                           else load_quantities(args.quantities_file))
             selection = select_cards(cards, quantities=quantities)
         elif args.faction is not None:
-            selection = select_cards(cards, faction=args.faction, copies=args.copies)
+            selection = select_cards(
+                cards,
+                faction=args.faction,
+                copies=args.copies,
+                legend_copies=args.legend_copies
+            )
+        
         elif args.all or not interactive:
-            selection = select_cards(cards, copies=args.copies)
+            selection = select_cards(
+                cards,
+                copies=args.copies,
+                legend_copies=args.legend_copies
+            )
         else:
             faction, quantities = _interactive_selection(cards)
             selection = (select_cards(cards, quantities=quantities) if quantities is not None

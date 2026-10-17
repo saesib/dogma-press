@@ -46,6 +46,10 @@ class Card:
     image_path: str = ""  # Optional image reference from an Image/ImagePath CSV column.
 
     @property
+    def is_legend(self) -> bool:
+        return "legend" in self.subtype.lower()
+
+    @property
     def type_line(self) -> str:
         return " — ".join(part for part in (self.card_type, self.subtype) if part) or "Type TBD"
 

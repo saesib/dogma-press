@@ -45,10 +45,12 @@ def select_cards(
     faction: str | None = None,
     copies: int = 1,
     quantities: Mapping[str, int] | None = None,
+    legend_copies: int | None = None,
 ) -> list[PrintItem]:
     """Build a print job. Quantities select only the listed IDs, in their given order.
 
     If no quantities are supplied, select all or all within one faction.
+    `legend_copies` overrides `copies` for cards whose subtype includes "Legend".
     """
     if quantities is not None:
         by_id = {card.id: card for card in cards}
@@ -64,8 +66,12 @@ def select_cards(
 
     if copies < 1:
         raise ValueError("Copies per card must be at least 1.")
+    if legend_copies is not None and legend_copies < 1:
+        raise ValueError("Legend copies must be at least 1.")
     chosen = cards if faction is None else [card for card in cards
                                             if card.faction == normalize_faction(faction)]
     if not chosen:
         raise ValueError(f"No cards found for faction {faction!r}.")
-    return [PrintItem(card, copies) for card in chosen]
+    return [PrintItem(card, legend_copies if legend_copies is not None and card.is_legend
+                      else copies)
+            for card in chosen]

@@ -41,6 +41,18 @@ class CardDataTests(unittest.TestCase):
             select_cards(self.cards, faction="TBD")
         self.assertEqual(len(select_cards(self.cards, faction="unassigned")), 1)
 
+    def test_legend_copies_override_uses_subtype(self):
+        legends = {card.id for card in self.cards if "legend" in card.subtype.lower()}
+        self.assertEqual(legends, {"38", "41", "46"})
+        for selected in (select_cards(self.cards, faction="D", copies=3, legend_copies=1),
+                         select_cards(self.cards, copies=3, legend_copies=1)):
+            for item in selected:
+                self.assertEqual(item.copies, 1 if item.card.is_legend else 3)
+        self.assertTrue(any(item.card.is_legend for item in selected))
+        self.assertEqual({item.copies for item in select_cards(self.cards, copies=2)}, {2})
+        with self.assertRaises(ValueError):
+            select_cards(self.cards, legend_copies=0)
+
     def test_custom_quantities(self):
         quantities = parse_quantities("1:3,2:2")
         selected = select_cards(self.cards, quantities=quantities)
